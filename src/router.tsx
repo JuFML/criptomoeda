@@ -3,9 +3,7 @@ import Home from './pages/home'
 import Detail from './pages/detail'
 import Notfound from './pages/notfound'
 
-const router = () => {
-  return (
-    createBrowserRouter([
+const router = createBrowserRouter([
         {
             children: [
                 {
@@ -22,8 +20,6 @@ const router = () => {
                 },
             ]
         }
-    ])
-  )
-}
+])
 
-export default router
+export { router}
