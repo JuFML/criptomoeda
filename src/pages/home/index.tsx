@@ -3,7 +3,7 @@ import styles from './home.module.css'
 import { BsSearch } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router'
 
-interface CoinProps {
+export interface CoinProps {
   changePercent24Hr: string;
   explorer: string;
   id: string;
@@ -17,8 +17,8 @@ interface CoinProps {
   volumeUsd24Hr: string;
   vwap24Hr: string;
   formatedPrice?: string;
-  fomatedMarket?: string;
-  fomatedVolume?: string;
+  formatedMarket?: string;
+  formatedVolume?: string;
 }
 
 interface DataProp {
@@ -30,7 +30,6 @@ const Home = () => {
   const [coins, setCoins] = useState<CoinProps[]>([])
   const [offset, setOffset] = useState(0)
   const navigate = useNavigate()
-  console.log("offset", offset)
 
   useEffect(() => {
     getData()
@@ -62,8 +61,8 @@ const Home = () => {
           const formated = {
             ...item,
             formatedPrice: price.format(Number(item.priceUsd)),
-            fomatedMarket: priceCompact.format(Number(item.marketCapUsd)),
-            fomatedVolume: priceCompact.format(Number(item.volumeUsd24Hr))
+            formatedMarket: priceCompact.format(Number(item.marketCapUsd)),
+            formatedVolume: priceCompact.format(Number(item.volumeUsd24Hr))
           }
           return formated
         })
@@ -119,6 +118,11 @@ const Home = () => {
 
               <td className={styles.tdLabel} data-label="Moeda">
                 <div className={styles.name}>
+                  <img
+                    className={styles.logo}
+                    alt="Logo Cripto"
+                    src={`https://assets.coincap.io/assets/icons/${coin.symbol.toLowerCase()}@2x.png`}
+                  />
                   <Link to={`/detail/${coin.id}`}>
                     <span>{coin.name}</span> | {coin.symbol}
                   </Link>
@@ -126,7 +130,7 @@ const Home = () => {
               </td>
 
               <td className={styles.tdLabel} data-label="Valor mercado">
-                {coin.fomatedMarket}
+                {coin.formatedMarket}
               </td>
 
               <td className={styles.tdLabel} data-label="Preço">
@@ -134,7 +138,7 @@ const Home = () => {
               </td>
 
               <td className={styles.tdLabel} data-label="Volume">
-                {coin.fomatedVolume}
+                {coin.formatedVolume}
               </td>
 
               <td className={Number(coin.changePercent24Hr) > 0 ? styles.tdProfit : styles.tdLoss} data-label="Mudança 24h">
