@@ -1,11 +1,76 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import styles from './home.module.css'
 import { BsSearch } from 'react-icons/bs'
 import { Link, useNavigate } from 'react-router'
 
+interface CoinProps {
+  changePercent24Hr: string;
+  explorer: string;
+  id: string;
+  marketCapUsd: string;
+  maxSupply: string;
+  name: string;
+  priceUsd: string;
+  rank: string;
+  supply: string;
+  symbol: string;
+  volumeUsd24Hr: string;
+  vwap24Hr: string;
+  formatedPrice?: string;
+  fomatedMarket?: string;
+  fomatedVolume?: string;
+}
+
+interface DataProp {
+  data: CoinProps[];
+}
+
 const Home = () => {
   const [input, setInput] = useState("")
+  const [coins, setCoins] = useState<CoinProps[]>([])
   const navigate = useNavigate()
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const getData = async () => {
+    fetch("https://api.coincap.io/v2/assets?limit=10&offset=0", {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      }
+    })
+      .then(response => response.json())
+      .then((data: DataProp) => {
+        const coinsData = data.data
+
+        const price = Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD"
+        })
+
+        const priceCompact = Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          notation: "compact"
+        })
+
+        const formatedResult = coinsData.map(item => {
+          const formated = {
+            ...item,
+            formatedPrice: price.format(Number(item.priceUsd)),
+            fomatedMarket: priceCompact.format(Number(item.marketCapUsd)),
+            fomatedVolume: priceCompact.format(Number(item.volumeUsd24Hr))
+          }
+          return formated
+        })
+
+        setCoins(formatedResult)
+      })
+      .catch(error => console.error("Erro:", error));
+
+  }
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -46,33 +111,35 @@ const Home = () => {
 
         <tbody id="tbody">
 
-          <tr className={styles.tr}>
+          {coins.length > 0 && coins.map(coin => (
+            <tr key={coin.id} className={styles.tr}>
 
-            <td className={styles.tdLabel} data-label="Moeda">
-              <div className={styles.name}>
-                <Link to={"/detail/bitcoin"}>
-                  <span>Bitcoin</span> | BTC
-                </Link>
-              </div>
-            </td>
+              <td className={styles.tdLabel} data-label="Moeda">
+                <div className={styles.name}>
+                  <Link to={`/detail/${coin.id}`}>
+                    <span>{coin.name}</span> | {coin.symbol}
+                  </Link>
+                </div>
+              </td>
 
-            <td className={styles.tdLabel} data-label="Valor mercado">
-              1T
-            </td>
+              <td className={styles.tdLabel} data-label="Valor mercado">
+                {coin.fomatedMarket}
+              </td>
 
-            <td className={styles.tdLabel} data-label="Preço">
-              8.000
-            </td>
+              <td className={styles.tdLabel} data-label="Preço">
+                {coin.formatedPrice}
+              </td>
 
-            <td className={styles.tdLabel} data-label="Volume">
-              2B
-            </td>
+              <td className={styles.tdLabel} data-label="Volume">
+                {coin.fomatedVolume}
+              </td>
 
-            <td className={styles.tdProfit} data-label="Mudança 24h">
-              <span>1.20</span>
-            </td>
+              <td className={Number(coin.changePercent24Hr) > 0 ? styles.tdProfit : styles.tdLoss} data-label="Mudança 24h">
+                <span>{Number(coin.changePercent24Hr).toFixed(3)}</span>
+              </td>
 
-          </tr>
+            </tr>
+          ))}
 
         </tbody>
       </table>
