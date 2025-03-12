@@ -28,14 +28,16 @@ interface DataProp {
 const Home = () => {
   const [input, setInput] = useState("")
   const [coins, setCoins] = useState<CoinProps[]>([])
+  const [offset, setOffset] = useState(0)
   const navigate = useNavigate()
+  console.log("offset", offset)
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [offset])
 
   const getData = async () => {
-    fetch("https://api.coincap.io/v2/assets?limit=10&offset=0", {
+    fetch(`https://api.coincap.io/v2/assets?limit=10&offset=${offset}`, {
       method: "GET",
       headers: {
         "Accept": "application/json"
@@ -66,7 +68,8 @@ const Home = () => {
           return formated
         })
 
-        setCoins(formatedResult)
+        const coinsList = [...coins, ...formatedResult]
+        setCoins(coinsList)
       })
       .catch(error => console.error("Erro:", error));
 
@@ -80,7 +83,7 @@ const Home = () => {
   }
 
   const handleGetMore = () => {
-    alert("teste")
+    setOffset(prev => prev + 10)
   }
 
   return (

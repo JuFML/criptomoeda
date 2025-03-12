@@ -134,4 +134,8 @@ table td {
     border-radius: 0;
   }
 
+  .tdLabel {
+    font-size: 15px;
+  }
+
 }
