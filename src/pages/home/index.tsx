@@ -2,7 +2,7 @@ import styles from './home.module.css'
 import { BsSearch } from 'react-icons/bs'
 import { Link } from 'react-router'
 
-const Home = () => {
+export function Home() {
 
   return (
     <main className={styles.container}>
@@ -52,7 +52,7 @@ const Home = () => {
               2B
             </td>
 
-            <td className={styles.tdLabel} data-label="Mudança 24h">
+            <td className={styles.tdProfit} data-label="Mudança 24h">
               <span>1.20</span>
             </td>
 
@@ -64,5 +64,3 @@ const Home = () => {
     </main>
   )
 }
-
-export default Home
